@@ -93,6 +93,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         record_button.enablePhotoTaking(false)
         record_button.enableVideoRecording(true)
         record_button.actionListener = object : RecordButton.ActionListener {
+
             override fun onStartRecord() {
                 startRecording()
 
@@ -135,6 +136,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             } catch (e: IOException) {
                 release()
                 recorder = null
+                record_button.cancelRecording()
                 Log.e(LOG_TAG, "prepare() failed")
                 return
             }
@@ -143,6 +145,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             } catch (e: IllegalStateException) {
                 release()
                 recorder = null
+                record_button.cancelRecording()
                 Log.e(LOG_TAG, "start() failed")
             }
         }
@@ -157,9 +160,9 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 e.printStackTrace()
             } finally {
                 release()
-                recorder = null
             }
         }
+        recorder = null
     }
 
     private fun showTimePicker() {

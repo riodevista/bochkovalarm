@@ -5,23 +5,25 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-<!--    <uses-permission-->
-<!--        android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!--    <uses-permission-->
+    <!--        android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".MyApp">
-        <activity android:name=".WakeUpActivity"
-            android:screenOrientation="userPortrait"
-            android:excludeFromRecents="true" />
-        <activity android:name=".RecordActivity"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".WakeUpActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="userPortrait" />
+        <activity
+            android:name=".RecordActivity"
             android:screenOrientation="userPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,15 +32,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AlarmActivity"
-            android:screenOrientation="userPortrait">
-        </activity>
+        <activity
+            android:name=".AlarmActivity"
+            android:screenOrientation="userPortrait"></activity>
 
         <receiver android:name=".receiver.AlarmReceiver" />
 
-        <receiver android:name=".receiver.BootReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
