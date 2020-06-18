@@ -212,6 +212,9 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 val c = Calendar.getInstance()
                 time_picker.currentHour = c.get(Calendar.HOUR_OF_DAY)
                 time_picker.currentMinute = c.get(Calendar.MINUTE)
+                setOnDismissListener {
+                    playOrPauseAudioRecord(false)
+                }
             }
     }
 
