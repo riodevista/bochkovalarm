@@ -72,7 +72,7 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
     private var minimumVideoDuration : Long = 0L
     private var videoDuration : Long = 0L
 
-    private val DEFAULT_MINIMUM_RECORDING_TIME = 500L
+    private val DEFAULT_MINIMUM_RECORDING_TIME = 0L
     private val DEFAULT_VIDEO_RECORDING_TIME= 10000L
     private val START_ANGLE = 270f
 
@@ -171,8 +171,11 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
-                if(!isLongPressEndCalled)
+                if(!isLongPressEndCalled) {
                     isVideoStart = true
+                    startTimeInMills = System.currentTimeMillis()
+                    actionListener?.onStartRecord()
+                }
                 progressAnimator.start()
             }
         })
@@ -276,8 +279,6 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
     private fun onLongPressStart() {
         isVideoStart = false
         isLongPressEndCalled = false
-        startTimeInMills = System.currentTimeMillis()
-        actionListener?.onStartRecord()
         LongPressStartAnimator.start()
     }
 

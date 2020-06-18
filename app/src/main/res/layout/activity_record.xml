@@ -23,7 +23,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="64dp"
-        app:enablePhotoTaking="true"
         app:enableVideoRecording="true"
         app:innerCircleColor="#E53935"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -88,7 +88,6 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private fun setupViews() {
 
-        record_button.setMinimumVideoDuration(100L)
         record_button.setVideoDuration(20 * 1000)
         record_button.enablePhotoTaking(false)
         record_button.enableVideoRecording(true)
@@ -108,6 +107,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             }
 
             override fun onDurationTooShortError() {
+                cancelRecording()
                 Log.e("MY TAG", "CALL the on on duration record ")
 
             }
@@ -126,28 +126,26 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     applicationContext
                 )
             )
-            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setAudioSource(MediaRecorder.AudioSource.DEFAULT)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setAudioEncodingBitRate(128000);
             setAudioSamplingRate(44100);
             try {
                 prepare()
+                try {
+                    start()
+                } catch (e: IllegalStateException) {
+                    release()
+                    recorder = null
+                    Log.e(LOG_TAG, "start() failed")
+                }
             } catch (e: IOException) {
                 release()
                 recorder = null
-                record_button.cancelRecording()
                 Log.e(LOG_TAG, "prepare() failed")
-                return
             }
-            try {
-                start()
-            } catch (e: IllegalStateException) {
-                release()
-                recorder = null
-                record_button.cancelRecording()
-                Log.e(LOG_TAG, "start() failed")
-            }
+
         }
     }
 
@@ -156,12 +154,23 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             try {
                 stop()
                 showTimePicker()
-            } catch (e: IllegalStateException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
-            } finally {
-                release()
             }
         }
+        recorder?.release()
+        recorder = null
+    }
+
+    private fun cancelRecording() {
+        recorder?.apply {
+            try {
+                stop()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        recorder?.release()
         recorder = null
     }
 
@@ -248,8 +257,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 try {
                     setDataSource(StorageUtil.getFilename(applicationContext))
                     val audioAttributes = AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
                         .build()
                     setAudioAttributes(audioAttributes)
                     isLooping = true
