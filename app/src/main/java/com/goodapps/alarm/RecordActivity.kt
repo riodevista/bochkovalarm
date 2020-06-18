@@ -162,9 +162,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         }
     }
 
-    var isAudioPlaying = false
     private fun showTimePicker() {
-        isAudioPlaying = false
         MaterialDialog(this)
             .title(R.string.select_time)
             .cancelable(false)
@@ -203,7 +201,6 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 time_picker.currentHour = c.get(Calendar.HOUR_OF_DAY)
                 time_picker.currentMinute = c.get(Calendar.MINUTE)
             }
-
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {

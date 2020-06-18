@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">BochkovAlarm</string>
+    <string name="app_name">Voker</string>
     <string name="select_time">Выберите время</string>
+    <string name="change_time">Изменить время</string>
     <string name="cancel_alarm_scheduling">Вы уверены, что хотите отменить?</string>
     <string name="cancel_alarm_scheduling_message">Запись пропадёт</string>
     <string name="yes">Да</string>

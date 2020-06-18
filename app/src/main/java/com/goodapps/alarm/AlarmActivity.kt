@@ -12,10 +12,13 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.goodapps.alarm.receiver.AlarmReceiver
 import com.goodapps.alarm.utils.PluralMergeUtil
 import com.ncorti.slidetoact.SlideToActView
 import kotlinx.android.synthetic.main.activity_alarm.*
+import kotlinx.android.synthetic.main.time_picker.*
 import java.io.IOException
 import java.util.*
 
@@ -27,6 +30,7 @@ class AlarmActivity : AppCompatActivity() {
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var player: MediaPlayer? = null
     private var alarmTime: Long = StorageUtil.NO_ALARM
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
@@ -88,6 +92,8 @@ class AlarmActivity : AppCompatActivity() {
             play_pause_button.toggle()
             playOrPauseAudioRecord(!play_pause_button.isPlay)
         }
+
+        alarm_time.setOnClickListener { showTimePicker() }
     }
 
     private fun updateAlarmTimeView(alarmTimeLong: Long) {
@@ -118,6 +124,8 @@ class AlarmActivity : AppCompatActivity() {
                 alarm_time_in_n_minutes.text = alarm_time_in_n_minutes.text.toString() + " "
             alarm_time_in_n_minutes.text = alarm_time_in_n_minutes.text.toString() +
                     "${PluralMergeUtil.choosePluralMerge(minutes, "минута", "минуты", "минут")}"
+        } else if (minutes == 0L) {
+            alarm_time_in_n_minutes.text = alarm_time_in_n_minutes.text.toString() + "меньше минуты"
         }
     }
 
@@ -138,7 +146,6 @@ class AlarmActivity : AppCompatActivity() {
                     setDataSource(StorageUtil.getFilename(applicationContext))
                     val audioAttributes = AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .build()
                     setAudioAttributes(audioAttributes)
                     isLooping = true
@@ -152,6 +159,69 @@ class AlarmActivity : AppCompatActivity() {
             player?.release()
             player = null
         }
+    }
+
+    private fun showTimePicker() {
+        MaterialDialog(this)
+            .title(R.string.change_time)
+            .cancelable(true)
+            .noAutoDismiss()
+            .show {
+                negativeButton(R.string.cancel) {
+//                    MaterialDialog(this@RecordActivity)
+//                        .title(R.string.cancel_alarm_scheduling)
+//                        .message(R.string.cancel_alarm_scheduling_message)
+//                        .positiveButton(R.string.yes, click = {
+//                            outerDialog.dismiss()
+//                        })
+//                        .negativeButton(R.string.no, click = {
+//                            it.dismiss()
+//                        }).show()
+                    dismiss()
+                }
+
+                positiveButton(R.string.ok) {
+                    setupAlarm(time_picker.currentHour, time_picker.currentMinute)
+                    dismiss()
+                }
+                customView(R.layout.time_picker)
+                time_picker.setIs24HourView(true)
+
+                val date = Date(alarmTime)
+                time_picker.currentHour = date.hours
+                time_picker.currentMinute = date.minutes
+            }
+    }
+
+    private fun setupAlarm(hourOfDay: Int, minute: Int) {
+        val now = Calendar.getInstance()
+        val alarmTimeToday = Calendar.getInstance()
+        val alarmTimeTomorrow = Calendar.getInstance()
+
+        alarmTimeToday.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        alarmTimeToday.set(Calendar.MINUTE, minute)
+        alarmTimeToday.set(Calendar.SECOND, 0)
+        alarmTimeToday.set(Calendar.MILLISECOND, 0)
+
+        alarmTimeTomorrow.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        alarmTimeTomorrow.set(Calendar.MINUTE, minute)
+        alarmTimeTomorrow.add(Calendar.DATE, 1)
+        alarmTimeTomorrow.set(Calendar.SECOND, 0)
+        alarmTimeTomorrow.set(Calendar.MILLISECOND, 0)
+
+        val alarmTimeFinal = if (alarmTimeToday.after(now))
+            alarmTimeToday.timeInMillis
+        else
+            alarmTimeTomorrow.timeInMillis
+
+        AlarmUtil.scheduleAlarm(applicationContext, alarmTimeFinal)
+
+        StorageUtil.saveAlarmTime(
+            this.applicationContext,
+            alarmTimeFinal
+        )
+        updateAlarmTimeView(alarmTimeFinal)
+        updateAlarmInNMinutes(alarmTimeFinal)
     }
 
 }

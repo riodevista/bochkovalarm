@@ -2,14 +2,14 @@ package com.goodapps.alarm
 
 import android.annotation.SuppressLint
 import android.media.AudioAttributes
-import android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.goodapps.alarm.receiver.WakeLocker
+import com.ncorti.slidetoact.SlideToActView
+import kotlinx.android.synthetic.main.activity_wake_up.*
 import java.io.IOException
 
 
@@ -30,12 +30,21 @@ class WakeUpActivity : AppCompatActivity() {
         )
         setContentView(R.layout.activity_wake_up)
         StorageUtil.removeAlarm(this.applicationContext)
-        startPlaying()
         WakeLocker.release()
 
+        slide_to_wake_button.onSlideCompleteListener = object : SlideToActView.OnSlideCompleteListener {
+            override fun onSlideComplete(view: SlideToActView) {
+                finishAlarm()
+            }
+        }
     }
 
-    fun finishAlarm(view: View) {
+    override fun onResume() {
+        super.onResume()
+        startPlaying()
+    }
+
+    fun finishAlarm() {
         finish()
     }
 
@@ -45,7 +54,6 @@ class WakeUpActivity : AppCompatActivity() {
                 setDataSource(StorageUtil.getFilename(applicationContext))
                 val audioAttributes = AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(CONTENT_TYPE_SONIFICATION)
                     .build()
                 setAudioAttributes(audioAttributes)
                 isLooping = true
@@ -57,14 +65,10 @@ class WakeUpActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         player?.release()
         player = null
     }
 
-    override fun onDestroy() {
-        StorageUtil.removeAlarm(this.applicationContext)
-        super.onDestroy()
-    }
 }

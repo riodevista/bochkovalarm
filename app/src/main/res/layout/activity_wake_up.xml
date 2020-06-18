@@ -12,30 +12,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Пора вставать :-)"
+        android:text="🔊"
         android:textColor="#000"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/ok_button"
+        android:textSize="51sp"
+        app:layout_constraintBottom_toTopOf="@+id/slide_to_wake_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/ok_button"
+    <com.ncorti.slidetoact.SlideToActView
+        android:id="@+id/slide_to_wake_button"
         android:layout_width="match_parent"
-        android:layout_height="164dp"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
-        android:onClick="finishAlarm"
-        android:text="ОК"
-        android:textColor="#000"
-        android:textSize="36sp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarm_text" />
+        app:text="Встаю"
+        app:outer_color="#43A047"
+        app:bump_vibration="50"/>
+<!--    <Button-->
+<!--        android:id="@+id/ok_button"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="164dp"-->
+<!--        android:layout_marginLeft="48dp"-->
+<!--        android:layout_marginRight="48dp"-->
+<!--        android:onClick="finishAlarm"-->
+<!--        android:text="ОК"-->
+<!--        android:textColor="#000"-->
+<!--        android:textSize="36sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/alarm_text" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
