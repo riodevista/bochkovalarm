@@ -124,7 +124,7 @@ class AlarmActivity : AppCompatActivity() {
                 alarm_time_in_n_minutes.text = alarm_time_in_n_minutes.text.toString() + " "
             alarm_time_in_n_minutes.text = alarm_time_in_n_minutes.text.toString() +
                     "${PluralMergeUtil.choosePluralMerge(minutes, "минута", "минуты", "минут")}"
-        } else if (minutes == 0L) {
+        } else if (hours == 0L && minutes == 0L) {
             alarm_time_in_n_minutes.text = alarm_time_in_n_minutes.text.toString() + "меньше минуты"
         }
     }
