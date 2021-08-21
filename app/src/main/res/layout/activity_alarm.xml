@@ -22,15 +22,26 @@
         app:layout_constraintVertical_bias="0.2">
 
         <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:visibility="visible"
+            android:text="Будильник сработает в" />
+
+        <TextView
             android:id="@+id/alarm_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:fontFamily="sans-serif-light"
             android:textColor="#000000"
-            android:textSize="86sp"
+            android:textSize="90sp"
             android:visibility="visible"
-            tools:text="10:47" />
+            tools:text="10:47"
+            android:layout_below="@id/title"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -54,7 +65,7 @@
                 android:text="Осталось 2 часа 47 минут"
                 android:textAlignment="center"
                 android:textColor="#9d9d9d"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:visibility="visible" />
 
 
@@ -63,8 +74,8 @@
 
     <com.ohoussein.playpause.PlayPauseView
         android:id="@+id/play_pause_button"
-        android:layout_width="93dp"
-        android:layout_height="93dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:clickable="true"
         android:elevation="0dp"
         android:foreground="?android:selectableItemBackground"
@@ -76,6 +87,20 @@
         app:layout_constraintTop_toBottomOf="@id/alarm_time_container"
         app:pause_bg="#007E72"
         app:play_bg="#009688" />
+
+    <TextView
+        android:id="@+id/play_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Прослушать запись для звонка"
+        android:textAlignment="center"
+        android:textColor="#9d9d9d"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/play_pause_button"
+        android:layout_marginTop="16dp"/>
 
     <com.ncorti.slidetoact.SlideToActView
         android:id="@+id/slide_to_cancel"
