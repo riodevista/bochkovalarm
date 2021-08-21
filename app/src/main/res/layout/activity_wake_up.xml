@@ -32,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:text="Встаю"
+        app:text="ОТКЛЮЧИТЬ"
         app:outer_color="#43A047"
         app:bump_vibration="50"/>
 

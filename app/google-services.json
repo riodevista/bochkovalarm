@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "712715166144",
+    "firebase_url": "https://bochkovalarm.firebaseio.com",
+    "project_id": "bochkovalarm",
+    "storage_bucket": "bochkovalarm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712715166144:android:0b71c36205dff8c707e825",
+        "android_client_info": {
+          "package_name": "com.goodapps.alarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "712715166144-b7i0p1ddu2kcoba9lqlfc52p3s0h9nqt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpsbKvF5KWP1pI8dB0J3PIb5pTbTx2tDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "712715166144-b7i0p1ddu2kcoba9lqlfc52p3s0h9nqt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

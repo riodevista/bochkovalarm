@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Voker</string>
-    <string name="select_time">Выберите время</string>
+    <string name="select_time">Назначьте время для будильника на ближайшие сутки</string>
     <string name="change_time">Изменить время</string>
-    <string name="cancel_alarm_scheduling">Вы уверены, что хотите отменить?</string>
-    <string name="cancel_alarm_scheduling_message">Запись пропадёт</string>
+    <string name="cancel_alarm_scheduling">Вы уверены, что хотите отменить будильник?</string>
+    <string name="cancel_alarm_scheduling_message">Запись будет удалена (если понадобится, вы сможете найти ее в файловой системе)</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="cancel">Отмена</string>
@@ -12,5 +12,5 @@
 
     <string name="alarm_text"></string>
     <string name="play_audio">Прослушать</string>
-    <string name="stop_audio">Остановить</string>
+    <string name="stop_audio">Пауза</string>
 </resources>

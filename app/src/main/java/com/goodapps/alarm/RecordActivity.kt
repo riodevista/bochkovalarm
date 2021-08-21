@@ -8,7 +8,10 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.TimePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -29,6 +32,26 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
+
+    private var pulseAnimationHandler = Handler()
+    private var pulseAnimationRunnable: Runnable? = null
+
+    init {
+        pulseAnimationRunnable = Runnable {
+            pulse_animation.visibility = View.VISIBLE
+            pulse_animation.alpha = 0.5f
+            pulse_animation.animate().scaleX(3f).scaleY(3f).alpha(0f)
+                .setInterpolator(AccelerateDecelerateInterpolator()).setDuration(2500)
+                .withEndAction {
+                    pulse_animation.scaleX = 1f
+                    pulse_animation.scaleY = 1f
+                    pulse_animation.alpha = 0.5f
+                    pulseAnimationRunnable?.let {
+                        pulseAnimationHandler.postDelayed(it, 3000)
+                    }
+                }
+        }
+    }
 
 
     // Requesting permission to RECORD_AUDIO
@@ -94,6 +117,7 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         record_button.actionListener = object : RecordButton.ActionListener {
 
             override fun onStartRecord() {
+                stopPulseAnimation()
                 startRecording()
 
             }
@@ -103,21 +127,35 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             }
 
             override fun onSingleTap() {
+                stopPulseAnimation()
                 Log.e("MY TAG", "CALL the on single tap record ")
             }
 
             override fun onDurationTooShortError() {
                 cancelRecording()
+//                startPulseAnimation()
                 Log.e("MY TAG", "CALL the on on duration record ")
 
             }
 
             override fun onCancelled() {
+//                startPulseAnimation()
                 Log.e("MY TAG", "CALL the on on cancel record ")
             }
         }
     }
 
+    private fun startPulseAnimation() {
+        pulseAnimationRunnable?.let {
+            pulseAnimationHandler.post(it)
+        }
+    }
+
+    private fun stopPulseAnimation() {
+        pulseAnimationRunnable?.let {
+            pulseAnimationHandler.removeCallbacks(it)
+        }
+    }
 
     private fun startRecording() {
         recorder = MediaRecorder().apply {
@@ -276,5 +314,13 @@ class RecordActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        stopPulseAnimation()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        startPulseAnimation()
+    }
 }

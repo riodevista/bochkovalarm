@@ -94,6 +94,6 @@
         app:rotate_icon="false"
         app:slider_height="48dp"
         app:slider_reversed="true"
-        app:text="Отменить"/>
+        app:text="Отменить будильник"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

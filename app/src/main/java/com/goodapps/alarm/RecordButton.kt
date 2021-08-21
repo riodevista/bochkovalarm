@@ -19,7 +19,11 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 
-class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
+class RecordButton @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
     interface ActionListener {
         fun onStartRecord()
@@ -41,54 +45,66 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
     private val outerCirclePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val outerArcPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private var desiredWidth : Int
-    private var desiredHeight : Int
+    private var desiredWidth: Int
+    private var desiredHeight: Int
 
-    private var outerCircleRadius : Float
-    private var innerCircleRadius : Float
-    private var outerCircleAnimatingFactor : Float
-    private var innerCircleAnimatingFactor : Float
+    private var outerCircleRadius: Float
+    private var innerCircleRadius: Float
+    private var outerCircleAnimatingFactor: Float
+    private var innerCircleAnimatingFactor: Float
 
-    private var STROKE_WIDTH : Float = 13f
+    private var STROKE_WIDTH: Float = 13f
 
-    private var initialInnerCircleRadius : Float = 0f
-    private var initialOuterCircleRadius : Float = 0f
+    private var initialInnerCircleRadius: Float = 0f
+    private var initialOuterCircleRadius: Float = 0f
 
-    private var diffInnerCircleRaius : Float = 0f
-    private var diffOuterCircleRaius : Float = 0f
+    private var diffInnerCircleRaius: Float = 0f
+    private var diffOuterCircleRaius: Float = 0f
 
-    private var sweeAngle:Float = 0f
+    private var sweeAngle: Float = 0f
 
-    private var arcRect : RectF
+    private var arcRect: RectF
 
     private var isVideoStart: Boolean = false
-    private var startTimeInMills : Long = 0
-    private var endTimeInMills : Long = 0
+    private var startTimeInMills: Long = 0
+    private var endTimeInMills: Long = 0
 
-    private var isLongPressEndCalled : Boolean = false
-    private var enablePhotoTaking : Boolean = false
+    private var isLongPressEndCalled: Boolean = false
+    private var enablePhotoTaking: Boolean = false
     private var enableVideoRecording: Boolean = false
 
-    private var minimumVideoDuration : Long = 0L
-    private var videoDuration : Long = 0L
+    private var minimumVideoDuration: Long = 0L
+    private var videoDuration: Long = 0L
 
     private val DEFAULT_MINIMUM_RECORDING_TIME = 0L
-    private val DEFAULT_VIDEO_RECORDING_TIME= 10000L
+    private val DEFAULT_VIDEO_RECORDING_TIME = 10000L
     private val START_ANGLE = 270f
 
 
-    private var divisionFactor : Float = 0f
+    private var divisionFactor: Float = 0f
+
     /*
     * Initializing and getting the value from xml attributes defing for the custom view
     * */
     init {
-        val typedArray = context.theme.obtainStyledAttributes(attrs,R.styleable.InstagramVideoButton, defStyleAttr, defStyleAttr)
-        outerCirclePaint.color = typedArray.getColor(R.styleable.InstagramVideoButton_outerCircleColor, Color.WHITE)
-        innerCirclePaint.color = typedArray.getColor(R.styleable.InstagramVideoButton_innerCircleColor, Color.WHITE)
-        outerArcPaint.color = typedArray.getColor(R.styleable.InstagramVideoButton_progressColor, Color.GRAY)
-        outerCirclePaint.strokeWidth = typedArray.getFloat(R.styleable.InstagramVideoButton_outerCircleWidth, STROKE_WIDTH)
-        enableVideoRecording = typedArray.getBoolean(R.styleable.InstagramVideoButton_enableVideoRecording, false)
-        enablePhotoTaking = typedArray.getBoolean(R.styleable.InstagramVideoButton_enablePhotoTaking, false)
+        val typedArray = context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.InstagramVideoButton,
+            defStyleAttr,
+            defStyleAttr
+        )
+        outerCirclePaint.color =
+            typedArray.getColor(R.styleable.InstagramVideoButton_outerCircleColor, Color.WHITE)
+        innerCirclePaint.color =
+            typedArray.getColor(R.styleable.InstagramVideoButton_innerCircleColor, Color.WHITE)
+        outerArcPaint.color =
+            typedArray.getColor(R.styleable.InstagramVideoButton_progressColor, Color.GRAY)
+        outerCirclePaint.strokeWidth =
+            typedArray.getFloat(R.styleable.InstagramVideoButton_outerCircleWidth, STROKE_WIDTH)
+        enableVideoRecording =
+            typedArray.getBoolean(R.styleable.InstagramVideoButton_enableVideoRecording, false)
+        enablePhotoTaking =
+            typedArray.getBoolean(R.styleable.InstagramVideoButton_enablePhotoTaking, false)
 
         outerCirclePaint.style = Paint.Style.STROKE
         outerArcPaint.style = Paint.Style.STROKE
@@ -112,7 +128,7 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         interpolator = LinearInterpolator()
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
-                if(isVideoStart)
+                if (isVideoStart)
                     longPressEnd()
             }
         })
@@ -130,48 +146,49 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
     private val LongPressEndAnimator = ValueAnimator.ofInt(0, 100).apply {
         duration = 500
         interpolator = AccelerateInterpolator()
-        addUpdateListener { animation -> run {
-            val value = animation.animatedValue as Int
+        addUpdateListener { animation ->
+            run {
+                val value = animation.animatedValue as Int
 
-            outerCircleRadius -= value * (diffOuterCircleRaius/100)
+                outerCircleRadius -= value * (diffOuterCircleRaius / 100)
 
-            if(innerCircleRadius <= initialInnerCircleRadius)
-                innerCircleRadius -= value * divisionFactor
+                if (innerCircleRadius <= initialInnerCircleRadius)
+                    innerCircleRadius -= value * divisionFactor
 
-            if(outerCircleRadius >= initialOuterCircleRadius )
-                invalidate()
-            else {
-                outerCircleRadius = initialOuterCircleRadius
-                innerCircleRadius = initialInnerCircleRadius
-                invalidate()
-                return@addUpdateListener
+                if (outerCircleRadius >= initialOuterCircleRadius)
+                    invalidate()
+                else {
+                    outerCircleRadius = initialOuterCircleRadius
+                    innerCircleRadius = initialInnerCircleRadius
+                    invalidate()
+                    return@addUpdateListener
+                }
             }
-        }
         }
     }
 
     private val LongPressStartAnimator = ValueAnimator.ofInt(0, 100).apply {
         duration = 500
         interpolator = AccelerateInterpolator()
-        addUpdateListener { animation -> run {
-            val value = animation.animatedValue as Int
-            outerCircleRadius += value * (diffOuterCircleRaius/100)
-            if(innerCircleRadius >= (width/5f))
-                innerCircleRadius += value * (diffInnerCircleRaius/100)
-            if(outerCircleRadius <= width/2f )
-                invalidate()
+        addUpdateListener { animation ->
+            run {
+                val value = animation.animatedValue as Int
+                outerCircleRadius += value * (diffOuterCircleRaius / 100)
+                if (innerCircleRadius >= (width / 5f))
+                    innerCircleRadius += value * (diffInnerCircleRaius / 100)
+                if (outerCircleRadius <= width / 2f)
+                    invalidate()
+                else {
+                    outerCircleRadius = width / 2f
+                    invalidate()
+                    return@addUpdateListener
+                }
 
-            else {
-                outerCircleRadius = width / 2f
-                invalidate()
-                return@addUpdateListener
             }
-
-        }
         }
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
-                if(!isLongPressEndCalled) {
+                if (!isLongPressEndCalled) {
                     isVideoStart = true
                     startTimeInMills = System.currentTimeMillis()
                     actionListener?.onStartRecord()
@@ -183,33 +200,47 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     override fun onDraw(canvas: Canvas?) {
 
-        if(canvas == null)
+        if (canvas == null)
             return
-        canvas.drawCircle((width/2).toFloat(), (height/2).toFloat(), innerCircleRadius, innerCirclePaint)
-        canvas.drawCircle((width/2).toFloat(), (height/2).toFloat(), outerCircleRadius-STROKE_WIDTH/2, outerCirclePaint)
+        canvas.drawCircle(
+            (width / 2).toFloat(),
+            (height / 2).toFloat(),
+            innerCircleRadius,
+            innerCirclePaint
+        )
+        canvas.drawCircle(
+            (width / 2).toFloat(),
+            (height / 2).toFloat(),
+            outerCircleRadius - STROKE_WIDTH / 2,
+            outerCirclePaint
+        )
 
-        if(isVideoStart)
+        if (isVideoStart)
             canvas.drawArc(arcRect, START_ANGLE, sweeAngle, false, outerArcPaint)
 
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        initialOuterCircleRadius = w/4f+STROKE_WIDTH
+        initialOuterCircleRadius = w / 4f + STROKE_WIDTH
         outerCircleRadius = initialOuterCircleRadius
 
-        initialInnerCircleRadius = w/4f-STROKE_WIDTH
+        initialInnerCircleRadius = w / 4f - STROKE_WIDTH
         innerCircleRadius = initialInnerCircleRadius
-        singleTapValueAnimator.setFloatValues(initialInnerCircleRadius, w/6f, initialInnerCircleRadius)
+        singleTapValueAnimator.setFloatValues(
+            initialInnerCircleRadius,
+            w / 6f,
+            initialInnerCircleRadius
+        )
         val top = STROKE_WIDTH / 2
         val left = top
-        val right = w - STROKE_WIDTH/2
+        val right = w - STROKE_WIDTH / 2
         val bottom = right
-        arcRect.set(left,top,right,bottom)
+        arcRect.set(left, top, right, bottom)
 
-        diffOuterCircleRaius = ((width/2f) - outerCircleRadius)
-        diffInnerCircleRaius = ((width/5f-20) - innerCircleRadius)
-        divisionFactor = (diffInnerCircleRaius/100)
+        diffOuterCircleRaius = ((width / 2f) - outerCircleRadius)
+        diffInnerCircleRaius = ((width / 5f - 20) - innerCircleRadius)
+        divisionFactor = (diffInnerCircleRaius / 100)
 
     }
 
@@ -217,21 +248,24 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         val desireW = desiredWidth + paddingLeft + paddingRight
         val desireH = desiredHeight + paddingTop + paddingBottom
 
-        setMeasuredDimension(measureDimension(desireW, widthMeasureSpec), measureDimension(desireH, heightMeasureSpec))
+        setMeasuredDimension(
+            measureDimension(desireW, widthMeasureSpec),
+            measureDimension(desireH, heightMeasureSpec)
+        )
     }
 
-    private fun measureDimension(desireSize : Int , measureSpec : Int) : Int {
-        var result : Int
-        val mode  = MeasureSpec.getMode(measureSpec)
+    private fun measureDimension(desireSize: Int, measureSpec: Int): Int {
+        var result: Int
+        val mode = MeasureSpec.getMode(measureSpec)
         val size = MeasureSpec.getSize(measureSpec)
 
-        if(mode == MeasureSpec.EXACTLY) {
+        if (mode == MeasureSpec.EXACTLY) {
             result = size
-        }else {
+        } else {
             result = desireSize
 
-            if(mode == MeasureSpec.AT_MOST) {
-                result = Math.min(size , result)
+            if (mode == MeasureSpec.AT_MOST) {
+                result = Math.min(size, result)
             }
         }
         return result
@@ -240,7 +274,7 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val detectUp = event!!.action == MotionEvent.ACTION_UP
-        if(!gestureDetector.onTouchEvent(event) && detectUp && enableVideoRecording)
+        if (!gestureDetector.onTouchEvent(event) && detectUp && enableVideoRecording)
             longPressEnd()
         return true
     }
@@ -250,13 +284,13 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
 
 
         override fun onDown(e: MotionEvent?): Boolean {
-            if(enableVideoRecording)
+            if (enableVideoRecording)
                 onLongPressStart()
             return super.onDown(e)
         }
 
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
-            if(enablePhotoTaking) {
+            if (enablePhotoTaking) {
                 onSingleTap()
                 return true
             }
@@ -266,13 +300,16 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     private fun onSingleTap() {
         actionListener?.onSingleTap()
-        val tapAnimator = ValueAnimator.ofFloat(initialInnerCircleRadius, width/7f, initialInnerCircleRadius)
+        val tapAnimator =
+            ValueAnimator.ofFloat(initialInnerCircleRadius, width / 7f, initialInnerCircleRadius)
         tapAnimator.setDuration(300L)
         tapAnimator.interpolator = AccelerateInterpolator()
-        tapAnimator.addUpdateListener { animator -> run{
-            innerCircleRadius = animator.animatedValue as Float
-            invalidate()
-        } }
+        tapAnimator.addUpdateListener { animator ->
+            run {
+                innerCircleRadius = animator.animatedValue as Float
+                invalidate()
+            }
+        }
         tapAnimator.start()
     }
 
@@ -287,7 +324,7 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         isLongPressEndCalled = true
         sweeAngle = 0f
         endTimeInMills = System.currentTimeMillis()
-        if(LongPressStartAnimator.isRunning())
+        if (LongPressStartAnimator.isRunning())
             LongPressStartAnimator.end()
         progressAnimator.end()
         LongPressEndAnimator.start()
@@ -295,11 +332,11 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     private fun setProgress(progress: Float) {
-        if(progress<=maxProgress)
+        if (progress <= maxProgress)
             this.progress = progress
         else
             this.progress = maxProgress
-        sweeAngle =  (360 * this.progress / maxProgress)
+        sweeAngle = (360 * this.progress / maxProgress)
         invalidate()
     }
 
@@ -308,20 +345,20 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         isLongPressEndCalled = true
         sweeAngle = 0f
         endTimeInMills = System.currentTimeMillis()
-        if(LongPressStartAnimator.isRunning())
+        if (LongPressStartAnimator.isRunning())
             LongPressStartAnimator.end()
         progressAnimator.end()
         LongPressEndAnimator.start()
-        if(isRecordingTooSmall(startTimeInMills, endTimeInMills, minimumVideoDuration)){
+        if (isRecordingTooSmall(startTimeInMills, endTimeInMills, minimumVideoDuration)) {
             actionListener?.onDurationTooShortError()
-        }else
+        } else
             actionListener?.onEndRecord()
 
         resetTimeFields()
 
     }
 
-    private  fun isRecordingTooSmall(start: Long, end: Long,defaultTime: Long) : Boolean{
+    private fun isRecordingTooSmall(start: Long, end: Long, defaultTime: Long): Boolean {
         return defaultTime > end - start
     }
 
@@ -330,7 +367,7 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         endTimeInMills = 0
     }
 
-    fun setMinimumVideoDuration(recordingTime : Long) {
+    fun setMinimumVideoDuration(recordingTime: Long) {
         minimumVideoDuration = DEFAULT_MINIMUM_RECORDING_TIME + recordingTime
     }
 
@@ -338,7 +375,7 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         videoDuration = recordingTime
     }
 
-    fun setProgressColor(color : Int) {
+    fun setProgressColor(color: Int) {
         outerArcPaint.color = color
         invalidate()
     }
@@ -353,15 +390,15 @@ class RecordButton @JvmOverloads constructor(context: Context, attrs: AttributeS
         invalidate()
     }
 
-    fun enableVideoRecording(enableVideoRecording : Boolean) {
+    fun enableVideoRecording(enableVideoRecording: Boolean) {
         this.enableVideoRecording = enableVideoRecording
     }
 
-    fun enablePhotoTaking(enablePhotoTaking : Boolean) {
+    fun enablePhotoTaking(enablePhotoTaking: Boolean) {
         this.enablePhotoTaking = enablePhotoTaking
     }
 
-    fun setOuterCircleWidth(width : Float) {
+    fun setOuterCircleWidth(width: Float) {
         outerCirclePaint.strokeWidth = width
         invalidate()
     }

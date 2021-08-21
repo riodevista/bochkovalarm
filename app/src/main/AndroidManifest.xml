@@ -24,6 +24,7 @@
             android:screenOrientation="userPortrait" />
         <activity
             android:name=".RecordActivity"
+            android:exported="true"
             android:screenOrientation="userPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +35,7 @@
 
         <activity
             android:name=".AlarmActivity"
-            android:screenOrientation="userPortrait"></activity>
+            android:screenOrientation="userPortrait" />
 
         <receiver android:name=".receiver.AlarmReceiver" />
 
